@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the application code into the container
-COPY . /app
+COPY requirements.txt /app
 
 # Install system dependencies (if needed for some libraries)
 RUN apt-get update && apt-get install -y \
@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libffi-dev \
     python3-dev \
-    && apt-get clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip
