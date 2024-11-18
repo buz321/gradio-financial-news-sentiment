@@ -1,3 +1,4 @@
+import warnings
 import gradio as gr
 import requests
 import yfinance as yf
@@ -5,6 +6,10 @@ import pandas as pd
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import matplotlib.pyplot as plt
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="gradio_client")
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Load the FinBERT model and tokenizer
 def load_finbert():
@@ -29,7 +34,10 @@ def analyze_sentiment_finbert(text):
 # Function to get stock data using Yahoo Finance
 def get_stock_data(ticker):
     stock = yf.Ticker(ticker)
-    return stock.history(period="1mo")
+    data = stock.history(period="1mo")
+    # Convert PeriodIndex to DatetimeIndex to avoid warnings
+    data.index = pd.to_datetime(data.index)
+    return data
 
 # Generate a stock price chart
 def get_stock_chart(stock_data):
